@@ -3,31 +3,47 @@ import '../css/form.css'
 import Head from 'next/head'
 import Link from 'next/link'
 import type { AppProps } from 'next/app'
+import {Layout, Menu} from "antd";
+const {Header, Content, Footer} = Layout;
+
+const menuItems = [
+    {
+        key: 'home',
+        label: (
+            <Link href="/"  rel="noopener noreferrer">
+                Home
+            </Link>
+        )
+    },
+    {
+        key: 'addHabit',
+        label: (
+            <Link href="/new"  rel="noopener noreferrer">
+                Add Habit
+            </Link>
+        )
+    },
+];
 
 function MyApp({ Component, pageProps }: AppProps) {
-  return (
-    <>
-      <Head>
-        <title>Pet Care App</title>
-      </Head>
-
-      <div className="top-bar">
-        <div className="nav">
-          <Link href="/">Home</Link>
-          <Link href="/new">Add Pet</Link>
-        </div>
-
-        <img
-          id="title"
-          src="https://upload.wikimedia.org/wikipedia/commons/1/1f/Pet_logo_with_flowers.png"
-          alt="pet care logo"
-        ></img>
-      </div>
-      <div className="wrapper grid">
-        <Component {...pageProps} />
-      </div>
-    </>
-  )
+    return (
+        <Layout>
+            <Header style={{position: "sticky", top: 0, zIndex: 1, width: "100%"}}>
+                <Menu
+                    theme="dark"
+                    mode="horizontal"
+                    defaultSelectedKeys={["home"]}
+                    items={menuItems}
+                />
+            </Header>
+            <Content className="site-layout" style={{padding: "0 50px"}}>
+                <Component {...pageProps} />
+            </Content>
+            <Footer style={{textAlign: "center"}}>
+                Johannes Ströbele ©2023, all rights reserved
+            </Footer>
+        </Layout>
+    );
 }
 
 export default MyApp
