@@ -86,20 +86,6 @@
   font-size: 110%;
 }
 
-.pet-name {
-  font-weight: bold;
-  font-size: 130%;
-}
-
-h5.pet-name {
-  color: white;
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  padding: 10px;
-  text-shadow: 0 0 4px black;
-}
-
 .info ul {
   padding: 0 10px 10px;
   border-radius: 7px;
@@ -165,10 +151,6 @@ li {
   margin-left: 10px;
 }
 
-/* Delete Pet */
-.pet-container {
-  width: 100%;
-}
 
 .confirmation-box.show {
   display: block;

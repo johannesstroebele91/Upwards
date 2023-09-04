@@ -1,18 +1,18 @@
 import React, {useState} from "react";
 import Link from 'next/link'
 import dbConnect from '../lib/dbConnect'
-import Pet, { Pets } from '../models/Pet'
-import { GetServerSideProps } from 'next'
+import HabitMongoose, {Habit} from '../models/Habit'
 import {Button, Card, Col, Progress, Row, Typography} from "antd";
 import moment from "moment";
 import {LeftOutlined, RightOutlined} from "@ant-design/icons";
+
 const {Paragraph, Title} = Typography;
 
 type Props = {
-  pets: Pets[]
+  habits: Habit[]
 }
 
-function getSuccessRateForDay(date: moment.Moment, habits: Pets[]): number {
+function getSuccessRateForDay(date: moment.Moment, habits: Habit[]): number {
     /* TODO fix later
         const habitsDone = habits.filter(habit => {
         if (!habit.doneHistory) {
@@ -26,7 +26,8 @@ function getSuccessRateForDay(date: moment.Moment, habits: Pets[]): number {
 }
 
 
-const Index = ({ pets }: Props) => {
+const Index = ({ habits }: Props) => {
+    console.log(habits)
   const [date, setDate] = useState(moment());
   return (
     <>
@@ -43,73 +44,39 @@ const Index = ({ pets }: Props) => {
         </Col>
       </Row>
       <Progress percent={75} showInfo={false}/>
-      <Paragraph italic>{getSuccessRateForDay(date, pets)}% of daily goals achieved</Paragraph>
+      <Paragraph italic>{getSuccessRateForDay(date, habits)}% of daily goals achieved</Paragraph>
       <Row gutter={[16, 8]} style={{flexDirection: 'column'}}>
-        {pets.map(habit => (
-            <Card key={habit.id} title={habit.name}>
-                <p>{habit.age}</p>
-                <p>{habit.owner_name}</p>
-                <p>{habit.species}</p>
+        {habits.map(habit => (
+            <Card key={habit._id} title={habit.name}>
+                <p>{habit.name}</p>
+                <p>{habit.weeklyGoal}</p>
+                <div className="btn-container">
+                    <Link href={{ pathname: '/[id]/edit', query: { id: habit._id } }}>
+                        <button className="btn edit">Edit</button>
+                    </Link>
+                    <Link href={{ pathname: '/[id]', query: { id: habit._id } }}>
+                        <button className="btn view">View</button>
+                    </Link>
+                </div>
+
             </Card>
         ))}
       </Row>
-      {pets.map((pet) => (
-        <div key={pet._id}>
-          <div className="card">
-            <img src={pet.image_url}  alt={pet.name}/>
-            <h5 className="pet-name">{pet.name}</h5>
-            <div className="main-content">
-              <p className="pet-name">{pet.name}</p>
-              <p className="owner">Owner: {pet.owner_name}</p>
-
-              {/* Extra Pet Info: Likes and Dislikes */}
-              <div className="likes info">
-                <p className="label">Likes</p>
-                <ul>
-                  {pet.likes.map((data, index) => (
-                    <li key={index}>{data} </li>
-                  ))}
-                </ul>
-              </div>
-              <div className="dislikes info">
-                <p className="label">Dislikes</p>
-                <ul>
-                  {pet.dislikes.map((data, index) => (
-                    <li key={index}>{data} </li>
-                  ))}
-                </ul>
-              </div>
-
-              <div className="btn-container">
-                <Link href={{ pathname: '/[id]/edit', query: { id: pet._id } }}>
-                  <button className="btn edit">Edit</button>
-                </Link>
-                <Link href={{ pathname: '/[id]', query: { id: pet._id } }}>
-                  <button className="btn view">View</button>
-                </Link>
-              </div>
-            </div>
-          </div>
-        </div>
-      ))}
     </>
   )
 }
 
-/* Retrieves pet(s) data from mongodb database */
-export const getServerSideProps: GetServerSideProps<Props> = async () => {
+/* Retrieves habit(s) data from mongodb database */
+export const getServerSideProps: () => Promise<{ props: { habits: any } }> = async () => {
   await dbConnect()
 
   /* find all the data in our database */
-  const result = await Pet.find({})
+  const result = await HabitMongoose.find({})
 
   /* Ensures all objectIds and nested objectIds are serialized as JSON data */
-  const pets = result.map((doc) => {
-    const pet = JSON.parse(JSON.stringify(doc))
-    return pet
-  })
+  const habits = result.map((doc) => JSON.parse(JSON.stringify(doc)))
 
-  return { props: { pets: pets } }
+  return { props: { habits: habits } }
 }
 
 export default Index

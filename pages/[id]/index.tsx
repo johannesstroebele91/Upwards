@@ -2,104 +2,75 @@ import { useState } from 'react'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
 import dbConnect from '../../lib/dbConnect'
-import Pet, { Pets } from '../../models/Pet'
-import { GetServerSideProps, GetServerSidePropsContext } from 'next'
-import { ParsedUrlQuery } from 'querystring'
-
-interface Params extends ParsedUrlQuery {
-  id: string
-}
+import HabitMongoose, {Habit} from '../../models/Habit'
+import {  GetServerSidePropsContext } from 'next'
+import {Card} from "antd";
 
 type Props = {
-  pet: Pets
+  habit: Habit
 }
 
-/* Allows you to view pet card info and delete pet card*/
-const PetPage = ({ pet }: Props) => {
+/* Allows you to view habit card info and delete habit card*/
+const HabitPage = ({ habit }: Props) => {
   const router = useRouter()
   const [message, setMessage] = useState('')
   const handleDelete = async () => {
-    const petID = router.query.id
+    const habitID = router.query._id
 
     try {
-      await fetch(`/api/pets/${petID}`, {
+      await fetch(`/api/habits/${habitID}`, {
         method: 'Delete',
       })
-      router.push('/')
+      await router.push('/')
     } catch (error) {
-      setMessage('Failed to delete the pet.')
+      setMessage('Failed to delete the habit.')
     }
   }
 
   return (
-    <div key={pet._id}>
-      <div className="card">
-        <img src={pet.image_url} />
-        <h5 className="pet-name">{pet.name}</h5>
-        <div className="main-content">
-          <p className="pet-name">{pet.name}</p>
-          <p className="owner">Owner: {pet.owner_name}</p>
-
-          {/* Extra Pet Info: Likes and Dislikes */}
-          <div className="likes info">
-            <p className="label">Likes</p>
-            <ul>
-              {pet.likes.map((data, index) => (
-                <li key={index}>{data} </li>
-              ))}
-            </ul>
-          </div>
-          <div className="dislikes info">
-            <p className="label">Dislikes</p>
-            <ul>
-              {pet.dislikes.map((data, index) => (
-                <li key={index}>{data} </li>
-              ))}
-            </ul>
-          </div>
-
-          <div className="btn-container">
-            <Link href={`/${pet._id}/edit`}>
-              <button className="btn edit">Edit</button>
-            </Link>
-            <button className="btn delete" onClick={handleDelete}>
-              Delete
-            </button>
-          </div>
+      <Card key={habit._id} title={habit.name}>
+        <p>{habit.weeklyGoal}</p>
+        <div className="btn-container">
+          <Link href={`/${habit._id}/edit`}>
+            <button className="btn edit">Edit</button>
+          </Link>
+          <button className="btn delete" onClick={handleDelete}>
+            Delete
+          </button>
         </div>
-      </div>
-      {message && <p>{message}</p>}
-    </div>
+        {message && <p>{message}</p>}
+      </Card>
   )
 }
 
-export const getServerSideProps: GetServerSideProps<Props, Params> = async ({
+export const getServerSideProps: ({params}: GetServerSidePropsContext) => Promise<{
+  notFound: boolean
+} | { props: { habit: any } }> = async ({
   params,
 }: GetServerSidePropsContext) => {
   await dbConnect()
 
-  if (!params?.id) {
+  if (!params?._id) {
     return {
       notFound: true,
     }
   }
 
-  const pet = await Pet.findById(params.id).lean()
+  const habit = await HabitMongoose.findById(params._id).lean()
 
-  if (!pet) {
+  if (!habit) {
     return {
       notFound: true,
     }
   }
 
   /* Ensures all objectIds and nested objectIds are serialized as JSON data */
-  const serializedPet = JSON.parse(JSON.stringify(pet))
+  const serializedHabit = JSON.parse(JSON.stringify(habit))
 
   return {
     props: {
-      pet: serializedPet,
-    },
+      habit: serializedHabit    },
   }
 }
 
-export default PetPage
+export default HabitPage
