@@ -1,14 +1,14 @@
 import mongoose from "mongoose";
 import { Moment } from "moment";
 
-export interface HabitMongoose extends mongoose.Document {
+export interface Habit extends mongoose.Document {
   name: string;
   weeklyGoal: number;
   doneHistory?: Moment[];
 }
 
 /* HabitSchema  will correspond to a collection in your MongoDB database. */
-const HabitSchema = new mongoose.Schema<HabitMongoose>({
+const HabitSchema = new mongoose.Schema<Habit>({
   name: {
     type: String,
     required: [true, "Please provide the name of the habit"],
@@ -22,5 +22,5 @@ const HabitSchema = new mongoose.Schema<HabitMongoose>({
   },
 });
 
-export default mongoose.models.HabitMongoose ||
-  mongoose.model<HabitMongoose>("HabitMongoose", HabitSchema);
+export default mongoose.models.Habit ||
+  mongoose.model<Habit>("Habit", HabitSchema);
