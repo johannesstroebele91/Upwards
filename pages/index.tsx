@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useRouter } from "next/router";
 import Link from "next/link";
 import dbConnect from "../lib/dbConnect";
 import HabitMongoose from "../models/Habit";
@@ -28,6 +29,28 @@ function getSuccessRateForDay(date: moment.Moment, habits: Habit[]): number {
 
 const Index = ({ habits }: Props) => {
   const [date, setDate] = useState(moment());
+  const router = useRouter();
+
+  async function handleClick(_id: string | undefined): Promise<void> {
+    const contentType = "application/json";
+    try {
+      const res = await fetch(`/api/habits/${_id}`, {
+        method: "DELETE",
+        headers: {
+          Accept: contentType,
+          "Content-Type": contentType,
+        },
+      });
+
+      // Throw error with status code in case Fetch API req failed
+      if (!res.ok) {
+        throw new Error(res.status.toString());
+      }
+    } catch (error) {
+      console.log("Failed to delete habit");
+    }
+    router.push("/");
+  }
 
   return (
     <>
@@ -66,6 +89,12 @@ const Index = ({ habits }: Props) => {
               <Link href={{ pathname: "/[id]", query: { id: habit._id } }}>
                 <button className="btn view">View</button>
               </Link>
+              <button
+                className="btn delete"
+                onClick={() => handleClick(habit._id)}
+              >
+                Delete
+              </button>
             </div>
           </Card>
         ))}

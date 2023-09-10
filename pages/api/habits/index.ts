@@ -6,8 +6,11 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const { method } = req;
   await dbConnect();
+  const {
+    query: { id },
+    method,
+  } = req;
 
   switch (method) {
     case "GET":
@@ -30,6 +33,7 @@ export default async function handler(
         res.status(400).json({ success: false });
       }
       break;
+
     default:
       res.status(400).json({ success: false });
       break;
