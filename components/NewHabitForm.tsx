@@ -2,6 +2,24 @@ import React, { useState } from "react";
 import { useRouter } from "next/router";
 import { mutate } from "swr";
 import { Habit } from "../shared/types";
+import { PlusOutlined } from "@ant-design/icons";
+import {
+  Button,
+  Card,
+  Cascader,
+  Checkbox,
+  DatePicker,
+  Form,
+  Input,
+  InputNumber,
+  Radio,
+  Select,
+  Slider,
+  Switch,
+  TreeSelect,
+  Upload,
+} from "antd";
+
 interface FormData {
   name: string;
   weeklyGoal: number;
@@ -18,7 +36,11 @@ type Props = {
   forNewHabit?: boolean;
 };
 
-const Form = ({ formId, habitForm, forNewHabit = true }: Props) => {
+export const NewHabitForm = ({
+  formId,
+  habitForm,
+  forNewHabit = true,
+}: Props) => {
   const router = useRouter();
   const contentType = "application/json";
   const [errors, setErrors] = useState({});
@@ -112,6 +134,15 @@ const Form = ({ formId, habitForm, forNewHabit = true }: Props) => {
     }
   };
 
+  const tailLayout = {
+    wrapperCol: { offset: 8, span: 16 },
+  };
+
+  const layout = {
+    labelCol: { span: 8 },
+    wrapperCol: { span: 16 },
+  };
+
   return (
     <>
       <form id={formId} onSubmit={handleSubmit}>
@@ -139,6 +170,37 @@ const Form = ({ formId, habitForm, forNewHabit = true }: Props) => {
           Submit
         </button>
       </form>
+      <Card>
+        <Form {...layout}>
+          <Form.Item label="Name">
+            <Input value={form.name} onChange={handleChange} required />
+          </Form.Item>
+
+          <Form.Item label="Category">
+            <Select>
+              <Select.Option value="demo">Demo</Select.Option>
+            </Select>
+          </Form.Item>
+
+          <Form.Item label="Weekly Goal">
+            <InputNumber value={form.weeklyGoal} required />
+          </Form.Item>
+
+          <Form.Item label="Active" valuePropName="checked">
+            <Switch />
+          </Form.Item>
+          <Form.Item {...tailLayout}>
+            <Button type="primary" htmlType="submit">
+              Submit
+            </Button>
+            <Button htmlType="button">Reset</Button>
+            <Button type="link" htmlType="button">
+              Fill form
+            </Button>
+          </Form.Item>
+        </Form>
+      </Card>
+
       <p>{message}</p>
       <div>
         {Object.values(errors).map((err, index) => (
@@ -149,5 +211,3 @@ const Form = ({ formId, habitForm, forNewHabit = true }: Props) => {
     </>
   );
 };
-
-export default Form;

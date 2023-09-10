@@ -1,13 +1,13 @@
-import Form from '../components/Form'
+import { NewHabitForm } from "../components/NewHabitForm";
 
 const NewHabit = () => {
   const habitForm = {
-    name: '',
+    name: "",
     weeklyGoal: 0,
-    doneHistory: []
-  }
+    doneHistory: [],
+  };
 
-  return <Form formId="add-habit-form" habitForm={habitForm} />
-}
+  return <NewHabitForm formId="add-habit-form" habitForm={habitForm} />;
+};
 
-export default NewHabit
+export default NewHabit;
