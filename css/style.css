@@ -1,5 +1,5 @@
 * {
-  font-family: 'Open Sans', sans-serif;
+  font-family: "Open Sans", sans-serif;
   box-sizing: border-box;
   padding: 0;
   margin: 0;
@@ -150,7 +150,6 @@ li {
   --accent: blue;
   margin-left: 10px;
 }
-
 
 .confirmation-box.show {
   display: block;

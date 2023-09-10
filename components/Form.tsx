@@ -1,117 +1,116 @@
-import React, { useState } from 'react'
-import { useRouter } from 'next/router'
-import { mutate } from 'swr'
-import {Habit} from "../models/Habit";
-
+import React, { useState } from "react";
+import { useRouter } from "next/router";
+import { mutate } from "swr";
+import { Habit } from "../shared/types";
 interface FormData {
-  name: string
-  weeklyGoal: number
+  name: string;
+  weeklyGoal: number;
 }
 
 interface Error {
-  name?: string
-  weeklyGoal?: string
+  name?: string;
+  weeklyGoal?: string;
 }
 
 type Props = {
-  formId: string
-  habitForm: FormData
-  forNewHabit?: boolean
-}
+  formId: string;
+  habitForm: FormData;
+  forNewHabit?: boolean;
+};
 
 const Form = ({ formId, habitForm, forNewHabit = true }: Props) => {
-  const router = useRouter()
-  const contentType = 'application/json'
-  const [errors, setErrors] = useState({})
-  const [message, setMessage] = useState('')
+  const router = useRouter();
+  const contentType = "application/json";
+  const [errors, setErrors] = useState({});
+  const [message, setMessage] = useState("");
 
   const [form, setForm] = useState<Habit>({
     name: habitForm.name,
-    weeklyGoal: habitForm.weeklyGoal
-  })
+    weeklyGoal: habitForm.weeklyGoal,
+  });
 
   /* The PUT method edits an existing entry in the mongodb database. */
   const putData = async (form: FormData) => {
-    const { id } = router.query
+    const { id } = router.query;
 
     try {
       const res = await fetch(`/api/habits/${id}`, {
-        method: 'PUT',
+        method: "PUT",
         headers: {
           Accept: contentType,
-          'Content-Type': contentType,
+          "Content-Type": contentType,
         },
         body: JSON.stringify(form),
-      })
+      });
 
       // Throw error with status code in case Fetch API req failed
       if (!res.ok) {
-        throw new Error(res.status.toString())
+        throw new Error(res.status.toString());
       }
 
-      const { data } = await res.json()
+      const { data } = await res.json();
 
-      await mutate(`/api/habits/${id}`, data, false) // Update the local data without a revalidation
-      await router.push('/')
+      await mutate(`/api/habits/${id}`, data, false); // Update the local data without a revalidation
+      await router.push("/");
     } catch (error) {
-      setMessage('Failed to update habit')
+      setMessage("Failed to update habit");
     }
-  }
+  };
 
   /* The POST method adds a new entry in the mongodb database. */
   const postData = async (form: FormData) => {
     try {
-      const res = await fetch('/api/habits', {
-        method: 'POST',
+      const res = await fetch("/api/habits", {
+        method: "POST",
         headers: {
           Accept: contentType,
-          'Content-Type': contentType,
+          "Content-Type": contentType,
         },
         body: JSON.stringify(form),
-      })
+      });
 
       // Throw error with status code in case Fetch API req failed
       if (!res.ok) {
-        throw new Error(res.status.toString())
+        throw new Error(res.status.toString());
       }
 
-      router.push('/')
+      router.push("/");
     } catch (error) {
-      setMessage('Failed to add habit')
+      setMessage("Failed to add habit");
     }
-  }
+  };
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    const target = e.target
-    const value = target.value
-    const name = target.name
+    const target = e.target;
+    const value = target.value;
+    const name = target.name;
 
     setForm({
       ...form,
       [name]: value,
-    })
-  }
+    });
+  };
 
   /* Makes sure habit info is filled */
   const formValidate = () => {
-    let err: Error = {}
-    if (!form.name) err.name = 'Name is required'
-    if (!form.weeklyGoal) err.weeklyGoal = 'Weekly goal is required'
-    return err
-  }
+    let err: Error = {};
+    if (!form.name) err.name = "Name is required";
+    if (!form.weeklyGoal) err.weeklyGoal = "Weekly goal is required";
+    return err;
+  };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    const errs = formValidate()
+    e.preventDefault();
+    const errs = formValidate();
 
     if (Object.keys(errs).length === 0) {
-      forNewHabit ? postData(form) : putData(form)
+      forNewHabit ? postData(form) : putData(form);
     } else {
-      setErrors({ errs })
+      setErrors(errs);
     }
-  }
+  };
 
   return (
     <>
@@ -126,11 +125,11 @@ const Form = ({ formId, habitForm, forNewHabit = true }: Props) => {
           required
         />
 
-        <label htmlFor="owner_name">Owner</label>
+        <label htmlFor="weekly_goal">Weekly Goal</label>
         <input
-          type="text"
-          maxLength={20}
-          name="owner_name"
+          type="number"
+          max={7}
+          name="weeklyGoal"
           value={form.weeklyGoal}
           onChange={handleChange}
           required
@@ -142,12 +141,13 @@ const Form = ({ formId, habitForm, forNewHabit = true }: Props) => {
       </form>
       <p>{message}</p>
       <div>
-        {Object.keys(errors).map((err, index) => (
-          <li key={index}>{err}</li>
+        {Object.values(errors).map((err, index) => (
+          //todo refactor later (as string)
+          <li key={index}>{err as string}</li>
         ))}
       </div>
     </>
-  )
-}
+  );
+};
 
-export default Form
+export default Form;
