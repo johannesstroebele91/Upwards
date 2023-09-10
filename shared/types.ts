@@ -1,8 +1,10 @@
-import { Moment } from "moment";
+import {Moment} from "moment";
 
 export interface Habit {
-  _id?: string;
-  name: string;
-  weeklyGoal: number;
-  doneHistory?: Moment[];
+    _id?: string;
+    name: string;
+    weeklyGoal: number;
+    active: boolean;
+    categories: string[];
+    doneHistory?: Moment[];
 }

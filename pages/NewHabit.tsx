@@ -1,13 +1,5 @@
-import { NewHabitForm } from "../components/NewHabitForm";
+import {NewHabitForm} from "../components/NewHabitForm";
 
-const NewHabit = () => {
-  const habitForm = {
-    name: "",
-    weeklyGoal: 0,
-    doneHistory: [],
-  };
-
-  return <NewHabitForm formId="add-habit-form" habitForm={habitForm} />;
-};
+const NewHabit = () => <NewHabitForm/>;
 
 export default NewHabit;
