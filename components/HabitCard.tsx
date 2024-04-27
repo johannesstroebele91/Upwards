@@ -1,9 +1,10 @@
-import {Badge, Button, Card, Col, Row, Select, SelectProps, Switch} from "antd";
+import {Badge, Card, Col, Row, Select, SelectProps, Switch} from "antd";
 import {Habit} from "../shared/types";
 import {NextRouter, useRouter} from "next/router";
 import {contentType, defaultCategories} from "../shared/constants";
 import {mutate} from "swr";
 import React from "react";
+import {DeleteOutlined, MinusOutlined, PlusOutlined} from "@ant-design/icons";
 
 interface HabitCardProps {
     habit: Habit;
@@ -70,11 +71,16 @@ export const HabitCard: React.FC<HabitCardProps> = ({habit}) => {
 
     let count = 0;
     return (
-        <Card key={habit._id} title={habit.name} style={{margin: 15}}>
+        <Card actions={[
+            <PlusOutlined/>,
+            <MinusOutlined/>
+
+        ]}
+              key={habit._id} title={habit.name} style={{margin: 15}}>
             <div style={{position: 'absolute', top: 0, right: 0, margin: '12px 12px 0 0'}}>
                 {/* TODO 0 grey 1-10 red >11-30 orange > 31-... green */}
-                <span>Success points </span>
-                <Badge count={count} showZero/>
+                <Badge count={count} showZero style={{position: 'relative', right: 12}} color={'grey'}/>
+                <DeleteOutlined onClick={() => handleClick(habit._id)} style={{position: 'relative', top: 2}}/>
             </div>
             <Row style={{display: 'flex', flexDirection: 'column'}} gutter={[12, 12]} wrap={false}>
                 <Col>
@@ -108,17 +114,6 @@ export const HabitCard: React.FC<HabitCardProps> = ({habit}) => {
                     </Row>
                 </Col>
             </Row>
-            <div style={{marginTop: 30}}>
-                <Button type="primary" style={{marginRight: '15px'}}>
-                    Positive
-                </Button>
-                <Button style={{marginRight: '15px'}}>
-                    Negative
-                </Button>
-                <Button onClick={() => handleClick(habit._id)} type="primary" danger>
-                    Delete
-                </Button>
-            </div>
         </Card>
     );
 };

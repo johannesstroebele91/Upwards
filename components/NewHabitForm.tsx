@@ -1,8 +1,10 @@
 import React from "react";
 import {useRouter} from "next/router";
-import {Button, Card, Form, FormInstance, Input, InputNumber, Select, Switch,} from "antd";
+import {Button, Card, Form, FormInstance, Input, InputNumber, Select, Switch, Typography,} from "antd";
 import {contentType, defaultCategories} from "../shared/constants";
 import {Habit} from "../shared/types";
+
+const {Title} = Typography;
 
 const formButtonsLayout = {
     wrapperCol: {offset: 8, span: 16},
@@ -43,6 +45,7 @@ export const NewHabitForm = () => {
 
     return (
         <Card style={{maxWidth: '700px', padding: '20px', margin: '40px auto 0 auto'}}>
+            <Title style={{textAlign: 'center', marginBottom: 30}}>Add a new habit:</Title>
             <Form
                 ref={formRef}
                 name="control-ref"

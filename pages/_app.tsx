@@ -37,7 +37,7 @@ function MyApp({Component, pageProps}: AppProps) {
                     items={menuItems}
                 />
             </Header>
-            <Content className="site-layout" style={{padding: "0 50px"}}>
+            <Content className="site-layout" style={{padding: "0 3%"}}>
                 <Component {...pageProps} />
             </Content>
             <Footer style={{textAlign: "center"}}>

@@ -15,7 +15,8 @@ const Index = ({habits}: Props) => {
     return (
         <>
             <Title style={{marginTop: 24}}>Welcome!</Title>
-            <Text>Record your progress with your habits or add new habits</Text>
+            <Text>Record your progress for your habits or add new habits.<br/>
+                The "+" means a positive progress for the habit, "-" a negative one.</Text>
 
             <Row gutter={[16, 8]} style={{marginTop: '30px'}}>
                 {habits.map((habit) => (
