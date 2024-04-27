@@ -42,7 +42,7 @@ export const NewHabitForm = () => {
     };
 
     return (
-        <Card style={{maxWidth: '700px', padding: '20px', marginBottom: '20px', margin: '0 auto'}}>
+        <Card style={{maxWidth: '700px', padding: '20px', margin: '40px auto 0 auto'}}>
             <Form
                 ref={formRef}
                 name="control-ref"

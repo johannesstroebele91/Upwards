@@ -26,6 +26,7 @@ const menuItems = [
 ];
 
 function MyApp({Component, pageProps}: AppProps) {
+    let currentYear = new Date().getFullYear();
     return (
         <Layout>
             <Header style={{position: "sticky", top: 0, zIndex: 1, width: "100%"}}>
@@ -40,7 +41,7 @@ function MyApp({Component, pageProps}: AppProps) {
                 <Component {...pageProps} />
             </Content>
             <Footer style={{textAlign: "center"}}>
-                Johannes Ströbele, Matthias Meretz ©2023, all rights reserved
+                Johannes Ströbele ©{currentYear}, all rights reserved
             </Footer>
         </Layout>
     );
