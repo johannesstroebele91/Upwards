@@ -1,4 +1,4 @@
-import {Button, Card, Col, Row, Select, SelectProps, Switch} from "antd";
+import {Badge, Button, Card, Col, Row, Select, SelectProps, Switch} from "antd";
 import {Habit} from "../shared/types";
 import {NextRouter, useRouter} from "next/router";
 import {contentType, defaultCategories} from "../shared/constants";
@@ -67,35 +67,37 @@ export const HabitCard: React.FC<HabitCardProps> = ({habit}) => {
         }
         await router.push("/");
     }
-    
+
+    let count = 0;
     return (
-        <Card key={habit._id} title={habit.name}>
-            <Button onClick={() => handleClick(habit._id)} type="primary" danger
-                    style={{position: 'absolute', top: 0, right: 0, margin: '12px 12px 0 0'}}>
-                Delete
-            </Button>
+        <Card key={habit._id} title={habit.name} style={{margin: 15}}>
+            <div style={{position: 'absolute', top: 0, right: 0, margin: '12px 12px 0 0'}}>
+                {/* TODO 0 grey 1-10 red >11-30 orange > 31-... green */}
+                <span>Success points </span>
+                <Badge count={count} showZero/>
+            </div>
             <Row style={{display: 'flex', flexDirection: 'column'}} gutter={[12, 12]} wrap={false}>
                 <Col>
                     <Row align="middle">
-                        <Col span={4}>Name</Col>
+                        <Col span={4} style={{minWidth: 100}}>Name</Col>
                         <Col>{habit.name}</Col>
                     </Row>
                 </Col>
                 <Col>
                     <Row align="middle">
-                        <Col span={4}>Weekly Goal</Col>
+                        <Col span={4} style={{minWidth: 100}}>Weekly Goal</Col>
                         <Col>{habit.weeklyGoal}</Col>
                     </Row>
                 </Col>
                 <Col>
                     <Row align="middle">
-                        <Col span={4}>Active</Col>
+                        <Col span={4} style={{minWidth: 100}}>Active</Col>
                         <Col><Switch checked={habit.active} disabled/></Col>
                     </Row>
                 </Col>
                 <Col>
                     <Row align="middle">
-                        <Col span={4}>Categories</Col>
+                        <Col span={4} style={{minWidth: 100}}>Categories</Col>
                         <Col><Select
                             mode="multiple"
                             style={{display: 'block', minWidth: '200px'}}
@@ -106,6 +108,17 @@ export const HabitCard: React.FC<HabitCardProps> = ({habit}) => {
                     </Row>
                 </Col>
             </Row>
+            <div style={{marginTop: 30}}>
+                <Button type="primary" style={{marginRight: '15px'}}>
+                    Positive
+                </Button>
+                <Button style={{marginRight: '15px'}}>
+                    Negative
+                </Button>
+                <Button onClick={() => handleClick(habit._id)} type="primary" danger>
+                    Delete
+                </Button>
+            </div>
         </Card>
     );
 };
