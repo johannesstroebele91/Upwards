@@ -1,6 +1,6 @@
-import {Badge, Button, Card, Col, Input, Row, Select, SelectProps, Switch, Tooltip} from "antd";
+import {Badge, Button, Card, Col, Input, Row, Select, Switch, Tooltip} from "antd";
 import {DeleteOutlined, MinusOutlined, PlusOutlined} from "@ant-design/icons";
-import {NextRouter, useRouter} from "next/router";
+import {useRouter} from "next/router";
 import {contentType, defaultCategories, homePath} from "../shared/constants";
 import {mutate} from "swr";
 import {Habit} from "../shared/types";
@@ -10,43 +10,37 @@ interface HabitCardProps {
     habit: Habit;
 }
 
-const convertCategories = (categories: string[]): SelectProps['options'] => {
-    return defaultCategories?.filter((defaultCategory) =>
-        categories && categories.includes(String(defaultCategory.value))
-    );
-};
-
-const putData = async (changedHabit: Habit, router: NextRouter) => {
-    const {id} = router.query;
-
-    try {
-        const res = await fetch(`/api/habits/${changedHabit._id}`, {
-            method: "PUT",
-            headers: {
-                Accept: contentType,
-                "Content-Type": contentType,
-            },
-            body: JSON.stringify(changedHabit),
-        });
-
-        if (!res.ok) {
-            console.log(res.status.toString());
-        }
-
-        const {data} = await res.json();
-
-        await mutate(`/api/habits/${id}`, data, false);
-        await router.push(homePath);
-    } catch (error) {
-        console.log("Failed to update habit");
-    }
-};
-
 export const HabitCard: React.FC<HabitCardProps> = ({habit}) => {
     const router = useRouter();
     const [editing, setEditing] = useState(false);
     const [name, setName] = useState(habit.name);
     const [weeklyGoal, setWeeklyGoal] = useState(habit.weeklyGoal);
+    const [active, setActive] = useState<boolean>(habit.active);
+    const [selectedCategories, setSelectedCategories] = useState<string[]>(habit.categories);
+
+    const editHabit = async (changedHabit: Habit) => {
+        try {
+            const res = await fetch(`/api/habits/${changedHabit._id}`, {
+                method: "PUT",
+                headers: {
+                    Accept: contentType,
+                    "Content-Type": contentType,
+                },
+                body: JSON.stringify(changedHabit),
+            });
+
+            if (!res.ok) {
+                console.log(res.status.toString());
+            }
+
+            const {data} = await res.json();
+
+            await mutate(`/api/habits/${changedHabit._id}`, data, false);
+        } catch (error) {
+            console.log("Failed to update habit");
+        }
+
+    };
 
     const handleClick = async (_id: string | undefined) => {
         const contentType = "application/json";
@@ -72,11 +66,6 @@ export const HabitCard: React.FC<HabitCardProps> = ({habit}) => {
         setEditing(true);
     };
 
-    const handleActiveChange = (checked: boolean) => {
-        void putData({...habit, active: checked}, router);
-    };
-
-
     const handleCancelEdit = () => {
         setEditing(false);
         setName(habit.name);
@@ -92,7 +81,7 @@ export const HabitCard: React.FC<HabitCardProps> = ({habit}) => {
     };
 
     const handleSave = () => {
-        putData({...habit, name, weeklyGoal}, router);
+        void editHabit({...habit, name, weeklyGoal});
         setEditing(false);
     };
 
@@ -107,7 +96,7 @@ export const HabitCard: React.FC<HabitCardProps> = ({habit}) => {
                 </Tooltip>
             ]}
             key={habit._id}
-            title={habit.name}
+            title={name}
             style={{margin: 15, width: 350}}
         >
             <div style={{position: 'absolute', top: 0, right: 0, display: "flex", marginTop: 12}}>
@@ -156,7 +145,10 @@ export const HabitCard: React.FC<HabitCardProps> = ({habit}) => {
                     <Row align="middle">
                         <Col span={4} style={{minWidth: 100}}>Active</Col>
                         <Col>
-                            <Switch checked={habit.active} onChange={handleActiveChange}/>
+                            <Switch checked={active} onChange={(newActive) => {
+                                setActive(newActive)
+                                void editHabit({...habit, active: newActive});
+                            }}/>
                         </Col>
                     </Row>
                 </Col>
@@ -167,8 +159,15 @@ export const HabitCard: React.FC<HabitCardProps> = ({habit}) => {
                             <Select
                                 mode="multiple"
                                 style={{display: 'block', minWidth: '200px'}}
-                                defaultValue={convertCategories(habit.categories)}
+                                value={selectedCategories}
                                 options={defaultCategories}
+                                onChange={(newCategories) => {
+                                    setSelectedCategories(newCategories)
+                                    void editHabit({
+                                        ...habit,
+                                        categories: newCategories,
+                                    });
+                                }}
                             />
                         </Col>
                     </Row>
