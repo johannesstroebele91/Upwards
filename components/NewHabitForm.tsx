@@ -73,7 +73,7 @@ export const NewHabitForm = () => {
                 </Form.Item>
 
                 <Form.Item label="Active" valuePropName="checked" name="active">
-                    <Switch/>
+                    <Switch defaultChecked/>
                 </Form.Item>
 
                 <Form.Item {...formButtonsLayout}>
