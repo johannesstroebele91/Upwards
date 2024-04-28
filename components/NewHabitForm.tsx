@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useRef} from "react";
 import {useRouter} from "next/router";
 import {Button, Card, Form, FormInstance, Input, InputNumber, Select, Switch, Typography,} from "antd";
 import {contentType, defaultCategories, homePath} from "../shared/constants";
@@ -16,7 +16,7 @@ const formInputsLayout = {
 };
 
 export const NewHabitForm = () => {
-    const formRef = React.useRef<FormInstance>(null);
+    const formRef = useRef<FormInstance>(null);
     const router = useRouter();
 
     /* The POST method adds a new entry in the mongodb database. */
