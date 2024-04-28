@@ -5,22 +5,23 @@ import type {AppProps} from "next/app";
 import {Layout, Menu} from "antd";
 import {useRouter} from "next/router";
 import {useEffect, useState} from "react";
+import {homePath, newHabitPath} from "../shared/constants";
 
 const {Header, Content, Footer} = Layout;
 
 const menuItems = [
     {
-        key: "/",
+        key: homePath,
         label: (
-            <Link href="/" rel="noopener noreferrer">
+            <Link href={homePath} rel="noopener noreferrer">
                 Home
             </Link>
         ),
     },
     {
-        key: "/NewHabit",
+        key: newHabitPath,
         label: (
-            <Link href="/NewHabit" rel="noopener noreferrer">
+            <Link href={newHabitPath} rel="noopener noreferrer">
                 Add Habit
             </Link>
         ),
@@ -46,7 +47,7 @@ function MyApp({Component, pageProps}: AppProps) {
                 <Menu
                     theme="dark"
                     mode="horizontal"
-                    defaultSelectedKeys={activeKey ? [activeKey] : ['/']}
+                    defaultSelectedKeys={activeKey ? [activeKey] : [homePath]}
                     items={menuItems}
                     selectedKeys={[activeKey]}
                 />

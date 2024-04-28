@@ -1,7 +1,7 @@
 import {Badge, Card, Col, Row, Select, SelectProps, Switch} from "antd";
 import {Habit} from "../shared/types";
 import {NextRouter, useRouter} from "next/router";
-import {contentType, defaultCategories} from "../shared/constants";
+import {contentType, defaultCategories, homePath} from "../shared/constants";
 import {mutate} from "swr";
 import React from "react";
 import {DeleteOutlined, MinusOutlined, PlusOutlined} from "@ant-design/icons";
@@ -39,7 +39,7 @@ const putData = async (form: Habit, router: NextRouter) => {
         const {data} = await res.json();
 
         await mutate(`/api/habits/${id}`, data, false); // Update the local data without a revalidation
-        await router.push("/");
+        await router.push(homePath);
     } catch (error) {
         console.log("Failed to update habit");
     }
@@ -66,7 +66,7 @@ export const HabitCard: React.FC<HabitCardProps> = ({habit}) => {
         } catch (error) {
             console.log("Failed to delete habit");
         }
-        await router.push("/");
+        await router.push(homePath);
     }
 
     let count = 0;

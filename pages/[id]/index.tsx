@@ -6,6 +6,7 @@ import HabitModels from "../../models/HabitModel";
 import {Habit} from "../../shared/types";
 import {GetServerSidePropsContext} from "next";
 import {Card} from "antd";
+import {homePath} from "../../shared/constants";
 
 type Props = {
     habit: Habit;
@@ -22,7 +23,7 @@ const HabitPage = ({habit}: Props) => {
             await fetch(`/api/habits/${habitID}`, {
                 method: "Delete",
             });
-            await router.push("/");
+            await router.push(homePath);
         } catch (error) {
             setMessage("Failed to delete the habit.");
         }

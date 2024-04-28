@@ -1,7 +1,7 @@
 import React from "react";
 import {useRouter} from "next/router";
 import {Button, Card, Form, FormInstance, Input, InputNumber, Select, Switch, Typography,} from "antd";
-import {contentType, defaultCategories} from "../shared/constants";
+import {contentType, defaultCategories, homePath} from "../shared/constants";
 import {Habit} from "../shared/types";
 
 const {Title} = Typography;
@@ -14,6 +14,7 @@ const formInputsLayout = {
     labelCol: {span: 8},
     wrapperCol: {span: 16},
 };
+
 export const NewHabitForm = () => {
     const formRef = React.useRef<FormInstance>(null);
     const router = useRouter();
@@ -39,7 +40,7 @@ export const NewHabitForm = () => {
             if (!res.ok) {
                 console.log(res.status.toString());
             }
-            await router.push("/");
+            await router.push(homePath);
         } catch (error) {
             console.log("Failed to add habit");
         }
