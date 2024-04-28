@@ -20,6 +20,7 @@ export const NewHabitForm = () => {
 
     /* The POST method adds a new entry in the mongodb database. */
     const postHabit = async (habit: Habit) => {
+        console.log(habit)
         try {
             const res = await fetch("/api/habits", {
                 method: "POST",
@@ -54,11 +55,11 @@ export const NewHabitForm = () => {
                 {...formInputsLayout}
             >
                 <Form.Item label="Name" name="name">
-                    <Input required placeholder="e.g. running"/>
+                    <Input required placeholder="e.g. Running"/>
                 </Form.Item>
 
                 <Form.Item label="Weekly Goal" name="weeklyGoal">
-                    <InputNumber required placeholder="e.g. 3"/>
+                    <InputNumber required placeholder="e.g. 3" min={0}/>
                 </Form.Item>
 
                 <Form.Item label="Categories" name="categories">
@@ -70,7 +71,8 @@ export const NewHabitForm = () => {
                         options={defaultCategories}
                     />
                 </Form.Item>
-                <Form.Item label="Switch" valuePropName="checked" name="active">
+
+                <Form.Item label="Active" valuePropName="checked" name="active">
                     <Switch/>
                 </Form.Item>
 
