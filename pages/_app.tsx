@@ -30,6 +30,8 @@ function MyApp({Component, pageProps}: AppProps) {
     return (
         <Layout>
             <Header style={{position: "sticky", top: 0, zIndex: 1, width: "100%"}}>
+                {/*TODO currently, Menu leads to this warning "findDOMNode is deprecated and will be removed in the next major release"
+                    this problem cannot be solved due to the current Antd version not compatible with React in strict mode */}
                 <Menu
                     theme="dark"
                     mode="horizontal"

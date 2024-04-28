@@ -35,7 +35,6 @@ export const getServerSideProps: () => Promise<{
 
     /* find all the data in our database */
     const result = await HabitModels.find({});
-    console.log("Habit data retrieved:", result); // Log the retrieved data
 
     /* Ensures all objectIds and nested objectIds are serialized as JSON data */
     const habits = result.map((doc) => JSON.parse(JSON.stringify(doc)));
