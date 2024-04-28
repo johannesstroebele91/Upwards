@@ -1,22 +1,22 @@
 import {Badge, Button, Card, Col, Input, Row, Select, Switch, Tooltip} from "antd";
 import {DeleteOutlined, MinusOutlined, PlusOutlined} from "@ant-design/icons";
-import {useRouter} from "next/router";
-import {contentType, defaultCategories, homePath} from "../shared/constants";
+import {contentType, defaultCategories} from "../shared/constants";
 import {mutate} from "swr";
 import {Habit} from "../shared/types";
 import React, {useState} from "react";
 
 interface HabitCardProps {
     habit: Habit;
+    onDeleteHabit: (_id: string) => void;
 }
 
-export const HabitCard: React.FC<HabitCardProps> = ({habit}) => {
-    const router = useRouter();
+export const HabitCard: React.FC<HabitCardProps> = ({habit, onDeleteHabit}) => {
     const [editing, setEditing] = useState(false);
     const [name, setName] = useState(habit.name);
     const [weeklyGoal, setWeeklyGoal] = useState(habit.weeklyGoal);
     const [active, setActive] = useState<boolean>(habit.active);
-    const [selectedCategories, setSelectedCategories] = useState<string[]>(habit.categories);
+    const [selectedCategories, setSelectedCategories] = useState<string[]>(habit.categories || []);
+    const [progress, setProgress] = useState<number>(habit.progress || 0);
 
     const editHabit = async (changedHabit: Habit) => {
         try {
@@ -39,61 +39,78 @@ export const HabitCard: React.FC<HabitCardProps> = ({habit}) => {
         } catch (error) {
             console.log("Failed to update habit");
         }
-
     };
 
-    const handleClick = async (_id: string | undefined) => {
-        const contentType = "application/json";
-        try {
-            const res = await fetch(`/api/habits/${_id}`, {
-                method: "DELETE",
-                headers: {
-                    Accept: contentType,
-                    "Content-Type": contentType,
-                },
-            });
+    const deleteHabit = async (_id: string | undefined) => {
+        if (_id) {
+            const contentType = "application/json";
+            try {
+                const res = await fetch(`/api/habits/${_id}`, {
+                    method: "DELETE",
+                    headers: {
+                        Accept: contentType,
+                        "Content-Type": contentType,
+                    },
+                });
 
-            if (!res.ok) {
-                console.log(res.status.toString());
+                if (!res.ok) {
+                    console.log(res.status.toString());
+                }
+            } catch (error) {
+                console.log("Failed to delete habit");
             }
-        } catch (error) {
-            console.log("Failed to delete habit");
+            onDeleteHabit(_id);
+        } else {
+            console.log('Id of the habit that should be deleted was not specified')
         }
-        await router.push(homePath);
     };
 
-    const handleEditClick = () => {
+    // Edit name and goal
+    const editHabitNameAndGoal = () => {
         setEditing(true);
     };
-
-    const handleCancelEdit = () => {
+    const changeName = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setName(e.target.value);
+    };
+    const changeWeeklyGoal = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setWeeklyGoal(parseInt(e.target.value));
+    };
+    const cancelEditNameAndGoal = () => {
         setEditing(false);
         setName(habit.name);
         setWeeklyGoal(habit.weeklyGoal);
     };
-
-    const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setName(e.target.value);
-    };
-
-    const handleWeeklyGoalChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setWeeklyGoal(parseInt(e.target.value));
-    };
-
-    const handleSave = () => {
+    const saveNameAndGoal = () => {
         void editHabit({...habit, name, weeklyGoal});
         setEditing(false);
     };
 
+    // Edit progress
+    const changeProgress = (increment: number): void => {
+        if (increment) {
+            let newProgress = progress;
+            setProgress(prevProgress => {
+                if (increment === -1) {
+                    newProgress = prevProgress > 1 ? prevProgress - 1 : 0;
+                } else {
+                    newProgress = prevProgress + increment;
+                }
+                return newProgress;
+            })
+            void editHabit({...habit, progress: newProgress});
+        }
+    }
+
     return (
         <Card
             actions={[
-                <Tooltip title="Mark Progress (+1)">
+                <Button type="text" onClick={() => changeProgress(-1)} style={{width: '80%', height: '100%'}}>
+                    <MinusOutlined style={{color: 'red'}}
+                                   className="progress-icon"/> </Button>,
+                <Button type="text" onClick={() => changeProgress(1)} style={{width: '80%', height: '100%'}}>
                     <PlusOutlined style={{color: '#1677ff'}} className="progress-icon"/>
-                </Tooltip>,
-                <Tooltip title="It happens (-1)">
-                    <MinusOutlined style={{color: 'red'}} className="progress-icon"/>
-                </Tooltip>
+                </Button>
+
             ]}
             key={habit._id}
             title={name}
@@ -102,15 +119,15 @@ export const HabitCard: React.FC<HabitCardProps> = ({habit}) => {
             <div style={{position: 'absolute', top: 0, right: 0, display: "flex", marginTop: 12}}>
                 {editing && (
                     <>
-                        <Button type="primary" onClick={handleSave} style={{marginRight: 9}}>Save</Button>
-                        <Button onClick={handleCancelEdit} style={{marginRight: 9}}>Cancel</Button>
+                        <Button type="primary" onClick={saveNameAndGoal} style={{marginRight: 9}}>Save</Button>
+                        <Button onClick={cancelEditNameAndGoal} style={{marginRight: 9}}>Cancel</Button>
                     </>)}
                 <div style={{margin: '3px 12px 0 0'}}>
                     <Tooltip placement="topRight" title="Score for progress of the habit">
-                        <Badge count={0} showZero style={{marginRight: 12}} color={'grey'}/>
+                        <Badge count={progress} showZero style={{marginRight: 12}} color={'grey'}/>
                     </Tooltip>
                     <Tooltip placement="top" title="Delete the habit">
-                        <DeleteOutlined className="delete-icon" onClick={() => handleClick(habit._id)}
+                        <DeleteOutlined className="delete-icon" onClick={() => deleteHabit(habit._id)}
                         />
                     </Tooltip>
 
@@ -121,10 +138,10 @@ export const HabitCard: React.FC<HabitCardProps> = ({habit}) => {
                     <Row align="middle">
                         <Col span={4} style={{minWidth: 100}}>Name</Col>
                         {!editing ? (
-                            <Col>{name} <Button type="link" onClick={handleEditClick}>Edit</Button></Col>
+                            <Col>{name} <Button type="link" onClick={editHabitNameAndGoal}>Edit</Button></Col>
                         ) : (
                             <Col>
-                                <Input value={name} onChange={handleNameChange}/>
+                                <Input value={name} onChange={changeName}/>
                             </Col>
                         )}
                     </Row>
@@ -133,10 +150,10 @@ export const HabitCard: React.FC<HabitCardProps> = ({habit}) => {
                     <Row align="middle">
                         <Col span={4} style={{minWidth: 100}}>Weekly Goal</Col>
                         {!editing ? (
-                            <Col>{weeklyGoal} <Button type="link" onClick={handleEditClick}>Edit</Button></Col>
+                            <Col>{weeklyGoal} <Button type="link" onClick={editHabitNameAndGoal}>Edit</Button></Col>
                         ) : (
                             <Col>
-                                <Input type="number" value={weeklyGoal.toString()} onChange={handleWeeklyGoalChange}/>
+                                <Input type="number" value={weeklyGoal.toString()} onChange={changeWeeklyGoal}/>
                             </Col>
                         )}
                     </Row>

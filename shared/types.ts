@@ -6,6 +6,6 @@ export interface HabitWithoutId {
     name: string;
     weeklyGoal: number;
     active: boolean;
-    categories: string[];
+    categories?: string[];
     progress?: number;
 }
