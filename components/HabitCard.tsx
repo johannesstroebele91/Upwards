@@ -1,4 +1,4 @@
-import {Badge, Card, Col, Row, Select, SelectProps, Switch} from "antd";
+import {Badge, Card, Col, Row, Select, SelectProps, Switch, Tooltip} from "antd";
 import {Habit} from "../shared/types";
 import {NextRouter, useRouter} from "next/router";
 import {contentType, defaultCategories, homePath} from "../shared/constants";
@@ -71,16 +71,24 @@ export const HabitCard: React.FC<HabitCardProps> = ({habit}) => {
     let count = 0;
     return (
         <Card actions={[
-            <PlusOutlined/>,
-            <MinusOutlined/>
+            <Tooltip title="Mark Progress (+1)">
+                <PlusOutlined style={{color: '#1677ff'}} className="progress-icon"/>
+            </Tooltip>,
+            <Tooltip title="It happens (-1)">
+                <MinusOutlined style={{color: 'red'}} className="progress-icon"/></Tooltip>
+
 
         ]}
               key={habit._id} title={habit.name} style={{margin: 15, width: 350}}>
             <div style={{position: 'absolute', top: 0, right: 0, margin: '12px 12px 0 0'}}>
                 {/* TODO 0 grey 1-10 red >11-30 orange > 31-... green */}
-                <Badge count={count} showZero style={{position: 'relative', right: 12}} color={'grey'}/>
-                <DeleteOutlined className="delete-icon" onClick={() => handleClick(habit._id)}
-                                style={{position: 'relative', top: 2}}/>
+                <Tooltip placement="topRight" title="Score for progress of the habit">
+                    <Badge count={count} showZero style={{marginRight: 12}} color={'grey'}/>
+                </Tooltip>
+                <Tooltip placement="top" title="Delete the habit">
+                    <DeleteOutlined className="delete-icon" onClick={() => handleClick(habit._id)}
+                                    style={{position: 'relative', top: 2}}/>
+                </Tooltip>
             </div>
             <Row style={{display: 'flex', flexDirection: 'column'}} gutter={[12, 12]} wrap={false}>
                 <Col>
