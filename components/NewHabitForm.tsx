@@ -21,28 +21,30 @@ export const NewHabitForm = () => {
 
     /* The POST method adds a new entry in the mongodb database. */
     const postHabit = async (habit: Habit) => {
-        try {
-            const res = await fetch("/api/habits", {
-                method: "POST",
-                headers: {
-                    Accept: contentType,
-                    "Content-Type": contentType,
-                },
-                body: JSON.stringify(habit),
-            });
+        if (habit) {
+            try {
+                const res = await fetch("/api/habits", {
+                    method: "POST",
+                    headers: {
+                        Accept: contentType,
+                        "Content-Type": contentType,
+                    },
+                    body: JSON.stringify(habit),
+                });
 
-            if (res.ok) {
-                console.log('New habit was created')
-                console.log(habit)
-            }
+                if (res.ok) {
+                    console.log('New habit was created')
+                    console.log(habit)
+                }
 
-            // Throw error with status code in case Fetch API req failed
-            if (!res.ok) {
-                console.log(res.status.toString());
+                // Throw error with status code in case Fetch API req failed
+                if (!res.ok) {
+                    console.log(res.status.toString());
+                }
+                await router.push(homePath);
+            } catch (error) {
+                console.log("Failed to add habit");
             }
-            await router.push(homePath);
-        } catch (error) {
-            console.log("Failed to add habit");
         }
     };
     const onReset = () => {
@@ -59,11 +61,13 @@ export const NewHabitForm = () => {
                 style={{maxWidth: 600}}
                 {...formInputsLayout}
             >
-                <Form.Item label="Name" name="name">
+                <Form.Item label="Name" name="name" rules={[{required: true, message: 'Please input a name'}]}
+                >
                     <Input required placeholder="e.g. Running"/>
                 </Form.Item>
 
-                <Form.Item label="Weekly Goal" name="weeklyGoal">
+                <Form.Item label="Weekly Goal" name="weeklyGoal"
+                           rules={[{required: true, message: 'Please input a weekly goal'}]}>
                     <InputNumber required placeholder="e.g. 3" min={0}/>
                 </Form.Item>
 
@@ -77,8 +81,8 @@ export const NewHabitForm = () => {
                     />
                 </Form.Item>
 
-                <Form.Item label="Active" valuePropName="checked" name="active">
-                    <Switch defaultChecked/>
+                <Form.Item label="Active" valuePropName="checked" name="active" initialValue={true}>
+                    <Switch/>
                 </Form.Item>
 
                 <Form.Item {...formButtonsLayout}>

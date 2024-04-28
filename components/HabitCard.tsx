@@ -11,10 +11,9 @@ interface HabitCardProps {
 }
 
 const convertCategories = (categories: string[]): SelectProps['options'] => {
-    return defaultCategories?.filter((defaultCategory) => {
-        if (categories?.length === 0) return [];
-        return defaultCategory.value && categories?.includes(String(defaultCategory.value));
-    });
+    return defaultCategories?.filter((defaultCategory) =>
+        categories && categories.includes(String(defaultCategory.value))
+    );
 };
 
 /* TODO add edit habit using PUT method for editing an existing entry in the mongodb database. */
@@ -76,7 +75,7 @@ export const HabitCard: React.FC<HabitCardProps> = ({habit}) => {
             <MinusOutlined/>
 
         ]}
-              key={habit._id} title={habit.name} style={{margin: 15}}>
+              key={habit._id} title={habit.name} style={{margin: 15, width: 350}}>
             <div style={{position: 'absolute', top: 0, right: 0, margin: '12px 12px 0 0'}}>
                 {/* TODO 0 grey 1-10 red >11-30 orange > 31-... green */}
                 <Badge count={count} showZero style={{position: 'relative', right: 12}} color={'grey'}/>
