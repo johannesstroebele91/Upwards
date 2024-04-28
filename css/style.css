@@ -158,6 +158,11 @@ li {
     display: block;
 }
 
+.delete-icon {
+    position: relative;
+    top: 2px;
+}
+
 .delete-icon:hover {
     color: red; /* Change color on hover */
     transform: scale(1.1); /* Optional: Scale up slightly on hover */
