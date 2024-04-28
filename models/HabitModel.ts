@@ -1,12 +1,7 @@
 import mongoose from "mongoose";
-import {Moment} from "moment";
+import {HabitWithoutId} from "../shared/types";
 
-export interface HabitModel extends mongoose.Document {
-    name: string;
-    weeklyGoal: number;
-    active: boolean;
-    categories: string[]
-    doneHistory?: Moment[];
+export interface HabitModel extends HabitWithoutId, mongoose.Document {
 }
 
 /* HabitSchema  will correspond to a collection in your MongoDB database. */
@@ -23,10 +18,10 @@ const HabitSchema = new mongoose.Schema<HabitModel>({
         type: [String],
     },
     weeklyGoal: {
-        type: Number, // Corrected field type
+        type: Number,
     },
-    doneHistory: {
-        type: [String],
+    progress: {
+        type: Number,
     },
 });
 

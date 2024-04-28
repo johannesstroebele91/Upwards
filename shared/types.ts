@@ -1,10 +1,11 @@
-import {Moment} from "moment";
-
-export interface Habit {
+export interface Habit extends HabitWithoutId {
     _id?: string;
+}
+
+export interface HabitWithoutId {
     name: string;
     weeklyGoal: number;
     active: boolean;
     categories: string[];
-    doneHistory?: Moment[];
+    progress?: number;
 }
