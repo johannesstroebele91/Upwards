@@ -31,13 +31,19 @@ const menuItems = [
 function MyApp({Component, pageProps}: AppProps) {
     let currentYear = new Date().getFullYear();
     const router = useRouter();
-    const [activeKey, setActiveKey] = useState<string>(router.pathname.slice(1));
+    const [activeKey, setActiveKey] = useState<string>(homePath);
 
     useEffect(() => {
-        const handleRouteChange = (route: string) => setActiveKey(route);
-        return () => router.events.off('routeChangeComplete', handleRouteChange);
-    }, [router]);
+        const handleRouteChange = (route: string) => {
+            setActiveKey(route);
+        };
 
+        // Listen for route change start event and call handleRouteChange
+        router.events.on('routeChangeStart', handleRouteChange);
+
+        // Cleanup function to remove event listener on unmount
+        return () => router.events.off('routeChangeStart', handleRouteChange);
+    }, [router.pathname]); // Only include router.pathname for dependency
 
     return (
         <Layout>
