@@ -20,7 +20,6 @@ export const NewHabitForm = () => {
 
     /* The POST method adds a new entry in the mongodb database. */
     const postHabit = async (habit: Habit) => {
-        console.log(habit)
         try {
             const res = await fetch("/api/habits", {
                 method: "POST",
@@ -30,6 +29,11 @@ export const NewHabitForm = () => {
                 },
                 body: JSON.stringify(habit),
             });
+
+            if (res.ok) {
+                console.log('New habit was created')
+                console.log(habit)
+            }
 
             // Throw error with status code in case Fetch API req failed
             if (!res.ok) {

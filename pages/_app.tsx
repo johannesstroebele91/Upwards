@@ -3,12 +3,14 @@ import "../css/form.css";
 import Link from "next/link";
 import type {AppProps} from "next/app";
 import {Layout, Menu} from "antd";
+import {useRouter} from "next/router";
+import {useEffect, useState} from "react";
 
 const {Header, Content, Footer} = Layout;
 
 const menuItems = [
     {
-        key: "home",
+        key: "/",
         label: (
             <Link href="/" rel="noopener noreferrer">
                 Home
@@ -16,7 +18,7 @@ const menuItems = [
         ),
     },
     {
-        key: "addHabit",
+        key: "/NewHabit",
         label: (
             <Link href="/NewHabit" rel="noopener noreferrer">
                 Add Habit
@@ -27,6 +29,15 @@ const menuItems = [
 
 function MyApp({Component, pageProps}: AppProps) {
     let currentYear = new Date().getFullYear();
+    const router = useRouter();
+    const [activeKey, setActiveKey] = useState<string>(router.pathname.slice(1));
+
+    useEffect(() => {
+        const handleRouteChange = (route: string) => setActiveKey(route);
+        return () => router.events.off('routeChangeComplete', handleRouteChange);
+    }, [router]);
+
+
     return (
         <Layout>
             <Header style={{position: "sticky", top: 0, zIndex: 1, width: "100%"}}>
@@ -35,8 +46,9 @@ function MyApp({Component, pageProps}: AppProps) {
                 <Menu
                     theme="dark"
                     mode="horizontal"
-                    defaultSelectedKeys={["home"]}
+                    defaultSelectedKeys={activeKey ? [activeKey] : ['/']}
                     items={menuItems}
+                    selectedKeys={[activeKey]}
                 />
             </Header>
             <Content className="site-layout" style={{padding: "0 3%"}}>
