@@ -114,7 +114,7 @@ export const HabitCard: React.FC<HabitCardProps> = ({habit, onDeleteHabit}) => {
             ]}
             key={habit._id}
             title={name}
-            style={{margin: 15, width: 350}}
+            style={{margin: 15, width: 400,}}
         >
             <div style={{position: 'absolute', top: 0, right: 0, display: "flex", marginTop: 12}}>
                 {editing && (
